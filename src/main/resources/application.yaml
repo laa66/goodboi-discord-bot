@@ -1,0 +1,4 @@
+# discord
+bot:
+  discord:
+    token: ${GOODBOI_DISCORD_TOKEN}
