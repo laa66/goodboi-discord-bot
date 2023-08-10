@@ -3,6 +3,10 @@ package com.laa66.goodboi.config;
 import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.Event;
@@ -41,6 +45,14 @@ public class AppConfig {
     @Bean
     public MessageCreateEventListener messageCreateEventListener(CommandFactory commandFactory) {
         return new MessageCreateEventListener(commandFactory);
+    }
+
+    @Bean
+    public AudioPlayerManager audioPlayerManager() {
+        final DefaultAudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+        playerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
+        AudioSourceManagers.registerRemoteSources(playerManager);
+        return playerManager;
     }
 
 }

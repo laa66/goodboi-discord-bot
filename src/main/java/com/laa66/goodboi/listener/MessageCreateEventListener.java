@@ -23,10 +23,12 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
     public Mono<Void> process(MessageCreateEvent event) {
         return filterMessage(event)
                 .flatMap(message -> {
+                    String[] splitMessage = message.getContent().split(" ");
                     Command command;
-                    switch (message.getContent()) {
+                    switch (splitMessage[0]) {
                         case "!push" -> command = commandFactory.create(PUSH_MESSAGE, message);
                         case "!zahir" -> command = commandFactory.create(ZAHIR_MESSAGE, message);
+                        case "!join" -> command = commandFactory.create(JOIN_CHANNEL, message);
                         default -> {
                             return Mono.empty();
                         }
