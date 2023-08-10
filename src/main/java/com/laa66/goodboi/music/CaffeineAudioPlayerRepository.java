@@ -1,6 +1,5 @@
 package com.laa66.goodboi.music;
 
-import com.laa66.goodboi.exception.CacheEntryNotFoundException;
 import com.laa66.goodboi.exception.CacheNotFoundException;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import lombok.AllArgsConstructor;
@@ -15,14 +14,14 @@ public class CaffeineAudioPlayerRepository implements AudioPlayerRepository {
     private final Cache cache;
 
     @Override
-    public AudioPlayer getPlayer(String guildId) {
+    public AudioPlayer getPlayer(long guildId) {
         return Optional.ofNullable(cache)
                 .map(cache -> cache.get(guildId, AudioPlayer.class))
-                .orElseThrow(() -> new CacheEntryNotFoundException("Audio player not found in cache for guild: " + guildId));
+                .orElse(null);
     }
 
     @Override
-    public void savePlayer(String guildId, AudioPlayer player) {
+    public void savePlayer(long guildId, AudioPlayer player) {
         Optional.ofNullable(cache)
                 .ifPresentOrElse(cache -> cache.putIfAbsent(guildId, player), () -> {
                     throw CACHE_NOT_FOUND_EXCEPTION;
@@ -30,7 +29,7 @@ public class CaffeineAudioPlayerRepository implements AudioPlayerRepository {
     }
 
     @Override
-    public void removePlayer(String guildId) {
+    public void removePlayer(long guildId) {
         Optional.ofNullable(cache)
                 .ifPresentOrElse(cache -> cache.evictIfPresent(guildId), () -> {
                     throw CACHE_NOT_FOUND_EXCEPTION;

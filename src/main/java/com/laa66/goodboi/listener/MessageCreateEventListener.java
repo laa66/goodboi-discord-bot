@@ -28,7 +28,7 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
                     switch (splitMessage[0]) {
                         case "!push" -> command = commandFactory.create(PUSH_MESSAGE, message);
                         case "!zahir" -> command = commandFactory.create(ZAHIR_MESSAGE, message);
-                        case "!join" -> command = commandFactory.create(JOIN_CHANNEL, message);
+                        case "!join" -> command = commandFactory.create(JOIN_CHANNEL, event);
                         default -> {
                             return Mono.empty();
                         }

@@ -46,13 +46,37 @@ class MessageCreateEventListenerUnitTest {
     }
 
     @Test
-    void shouldProcessValidCommand() {
+    void shouldProcessValidPushCommand() {
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);
         when(message.isPinned()).thenReturn(false);
         when(message.getContent()).thenReturn("!push");
         when(event.getMessage()).thenReturn(message);
         when(commandFactory.create(CommandType.PUSH_MESSAGE, message)).thenReturn(command);
+        when(command.execute()).thenReturn(Mono.empty());
+
+        Mono<Void> result = messageCreateEventListener.process(event);
+        StepVerifier.create(result)
+                .expectSubscription()
+                .verifyComplete();
+
+        verify(event, times(1)).getMessage();
+        verify(message, times(1)).getAuthor();
+        verify(user, times(1)).isBot();
+        verify(message, times(1)).isPinned();
+        verify(message, times(2)).getContent();
+        verify(commandFactory, times(1)).create(any(), any());
+        verify(command, times(1)).execute();
+    }
+
+    @Test
+    void shouldProcessValidJoinCommand() {
+        when(message.getAuthor()).thenReturn(Optional.of(user));
+        when(user.isBot()).thenReturn(false);
+        when(message.isPinned()).thenReturn(false);
+        when(message.getContent()).thenReturn("!join");
+        when(event.getMessage()).thenReturn(message);
+        when(commandFactory.create(CommandType.JOIN_CHANNEL, event)).thenReturn(command);
         when(command.execute()).thenReturn(Mono.empty());
 
         Mono<Void> result = messageCreateEventListener.process(event);

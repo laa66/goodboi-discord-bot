@@ -4,10 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 public interface AudioPlayerRepository {
 
-    AudioPlayer getPlayer(String guildId);
+    AudioPlayer getPlayer(long guildId);
 
-    void savePlayer(String guildId, AudioPlayer player);
+    void savePlayer(long guildId, AudioPlayer player);
 
-    void removePlayer(String guildId);
+    void removePlayer(long guildId);
 
 }

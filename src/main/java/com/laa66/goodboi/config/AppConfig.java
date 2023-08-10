@@ -3,6 +3,8 @@ package com.laa66.goodboi.config;
 import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
+import com.laa66.goodboi.music.AudioPlayerRepository;
+import com.laa66.goodboi.music.CaffeineAudioPlayerRepository;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -11,6 +13,8 @@ import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.Event;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,8 +42,8 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandFactory commandFactory() {
-        return new CommandFactory();
+    public CommandFactory commandFactory(AudioPlayerManager audioPlayerManager, AudioPlayerRepository audioPlayerRepository) {
+        return new CommandFactory(audioPlayerManager, audioPlayerRepository);
     }
 
     @Bean
@@ -53,6 +57,12 @@ public class AppConfig {
         playerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
         AudioSourceManagers.registerRemoteSources(playerManager);
         return playerManager;
+    }
+
+    @Bean
+    public AudioPlayerRepository audioPlayerRepository(CacheManager cacheManager) {
+        final Cache cache = cacheManager.getCache("audio_player");
+        return new CaffeineAudioPlayerRepository(cache);
     }
 
 }

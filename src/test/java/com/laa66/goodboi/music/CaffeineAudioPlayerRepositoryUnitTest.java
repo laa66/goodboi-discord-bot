@@ -18,35 +18,33 @@ class CaffeineAudioPlayerRepositoryUnitTest {
     @Mock
     Cache cache;
 
+    @Mock
+    AudioPlayer player;
+
     @InjectMocks
     CaffeineAudioPlayerRepository caffeineAudioPlayerRepository;
 
     @Test
     void shouldGetPlayerValidGuildId() {
-        AudioPlayer player = mock(AudioPlayer.class);
-        when(cache.get("id", AudioPlayer.class)).thenReturn(player);
-        AudioPlayer result = caffeineAudioPlayerRepository.getPlayer("id");
+        when(cache.get(1L, AudioPlayer.class)).thenReturn(player);
+        AudioPlayer result = caffeineAudioPlayerRepository.getPlayer(1L);
         assertEquals(player, result);
 
-    }
-
-    @Test
-    void shouldGetPlayerInvalidGuildId() {
-        when(cache.get("invalidId", AudioPlayer.class)).thenReturn(null);
-        assertThrows(CacheEntryNotFoundException.class, () -> caffeineAudioPlayerRepository.getPlayer("invalidId"));
+        when(cache.get(2L, AudioPlayer.class)).thenReturn(null);
+        AudioPlayer resultEmpty = caffeineAudioPlayerRepository.getPlayer(2L);
+        assertNull(resultEmpty);
     }
 
     @Test
     void shouldSavePlayer() {
-        AudioPlayer player = mock(AudioPlayer.class);
-        caffeineAudioPlayerRepository.savePlayer("id", player);
-        verify(cache, times(1)).putIfAbsent("id", player);
+        caffeineAudioPlayerRepository.savePlayer(1L, player);
+        verify(cache, times(1)).putIfAbsent(1L, player);
     }
 
     @Test
     void shouldRemovePlayer() {
-        caffeineAudioPlayerRepository.removePlayer("id");
-        verify(cache, times(1)).evictIfPresent("id");
+        caffeineAudioPlayerRepository.removePlayer(1L);
+        verify(cache, times(1)).evictIfPresent(1L);
     }
 
 }
