@@ -18,7 +18,7 @@ public class JoinCommand implements Command {
 
     private final MessageCreateEvent messageCreateEvent;
     private final AudioPlayerManager playerManager;
-    private final AudioContextRepository playerRepository;
+    private final AudioContextRepository contextRepository;
 
     @Override
     public Mono<Void> execute() {
@@ -37,12 +37,12 @@ public class JoinCommand implements Command {
         long guildId = messageCreateEvent.getGuildId()
                 .orElseThrow()
                 .asLong();
-        final AudioPlayer audioPlayer = Optional.ofNullable(playerRepository.getContext(guildId))
+        final AudioPlayer audioPlayer = Optional.ofNullable(contextRepository.getContext(guildId))
                 .map(AudioContext::getPlayer)
                 .orElseGet(() -> {
                     AudioPlayer player = playerManager.createPlayer();
                     AudioContext context = AudioContext.createContext(player);
-                    playerRepository.saveContext(guildId, context);
+                    contextRepository.saveContext(guildId, context);
                     return player;
                 });
         return new LavaPlayerAudioProvider(audioPlayer);

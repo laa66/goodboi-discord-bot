@@ -60,7 +60,7 @@ public class AppConfig {
     }
 
     @Bean
-    public AudioContextRepository audioPlayerRepository(CacheManager cacheManager) {
+    public AudioContextRepository audioContextRepository(CacheManager cacheManager) {
         final Cache cache = cacheManager.getCache("audio_player");
         return new AudioContextCacheRepository(cache);
     }

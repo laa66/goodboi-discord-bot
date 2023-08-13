@@ -35,7 +35,7 @@ class JoinCommandUnitTest {
     AudioPlayerManager playerManager;
 
     @Mock
-    AudioContextRepository playerRepository;
+    AudioContextRepository contextRepository;
 
     @InjectMocks
     JoinCommand joinCommand;
@@ -61,18 +61,19 @@ class JoinCommandUnitTest {
     @Test
     void shouldExecuteValidGuildIdPlayerPresent() {
         when(messageCreateEvent.getGuildId()).thenReturn(Optional.of(Snowflake.of(1)));
-        when(playerRepository.getContext(1)).thenReturn(context);
+        when(contextRepository.getContext(1)).thenReturn(context);
         when(messageCreateEvent.getMember()).thenReturn(Optional.of(member));
         when(member.getVoiceState()).thenReturn(Mono.just(voiceState));
         when(voiceState.getChannel()).thenReturn(Mono.just(voiceChannel));
         when(voiceChannel.join(any(VoiceChannelJoinSpec.class))).thenReturn(Mono.just(voiceConnection));
+        when(context.getPlayer()).thenReturn(player);
 
         StepVerifier.create(joinCommand.execute())
                 .expectSubscription()
                 .verifyComplete();
 
         verify(messageCreateEvent, times(1)).getGuildId();
-        verify(playerRepository, times(1)).getContext(1);
+        verify(contextRepository, times(1)).getContext(1);
         verify(messageCreateEvent, times(1)).getMember();
         verify(member, times(1)).getVoiceState();
         verify(voiceState, times(1)).getChannel();
@@ -88,7 +89,7 @@ class JoinCommandUnitTest {
     @Test
     void shouldExecuteEmptyAudioPlayerRepository() {
         when(messageCreateEvent.getGuildId()).thenReturn(Optional.of(Snowflake.of(1)));
-        when(playerRepository.getContext(1)).thenReturn(null);
+        when(contextRepository.getContext(1)).thenReturn(null);
         when(playerManager.createPlayer()).thenReturn(player);
         when(messageCreateEvent.getMember()).thenReturn(Optional.of(member));
         when(member.getVoiceState()).thenReturn(Mono.just(voiceState));
@@ -100,7 +101,7 @@ class JoinCommandUnitTest {
                 .verifyComplete();
 
         verify(messageCreateEvent, times(1)).getGuildId();
-        verify(playerRepository, times(1)).getContext(1);
+        verify(contextRepository, times(1)).getContext(1);
         verify(playerManager, times(1)).createPlayer();
         verify(messageCreateEvent, times(1)).getMember();
         verify(member, times(1)).getVoiceState();

@@ -16,6 +16,7 @@ public class AudioContext {
     public static AudioContext createContext(AudioPlayer player) {
         TrackScheduler scheduler = new TrackScheduler();
         TrackLoadResultHandler loadResultHandler = new TrackLoadResultHandler(scheduler, player);
+        player.addListener(scheduler);
         return new AudioContext(player, scheduler, loadResultHandler);
     }
 }

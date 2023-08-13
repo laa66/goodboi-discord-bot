@@ -10,13 +10,14 @@ import lombok.AllArgsConstructor;
 public class CommandFactory {
 
     private final AudioPlayerManager playerManager;
-    private final AudioContextRepository playerRepository;
+    private final AudioContextRepository contextRepository;
 
     public Command create(CommandType commandType, Object... args) {
         Command command;
         switch (commandType) {
             case PUSH_MESSAGE, ZAHIR_MESSAGE -> command = new PushCommand((Message) args[0]);
-            case JOIN_CHANNEL -> command = new JoinCommand((MessageCreateEvent) args[0], playerManager, playerRepository);
+            case JOIN_CHANNEL -> command = new JoinCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
+            case PLAY_MUSIC -> command = new PlayCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;

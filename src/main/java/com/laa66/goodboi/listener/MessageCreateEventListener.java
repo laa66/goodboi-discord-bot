@@ -5,6 +5,7 @@ import com.laa66.goodboi.command.CommandFactory;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import lombok.AllArgsConstructor;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 import static com.laa66.goodboi.command.CommandType.*;
@@ -29,6 +30,7 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
                         case "!push" -> command = commandFactory.create(PUSH_MESSAGE, message);
                         case "!zahir" -> command = commandFactory.create(ZAHIR_MESSAGE, message);
                         case "!join" -> command = commandFactory.create(JOIN_CHANNEL, event);
+                        case "!play" -> command = commandFactory.create(PLAY_MUSIC, event);
                         default -> {
                             return Mono.empty();
                         }
