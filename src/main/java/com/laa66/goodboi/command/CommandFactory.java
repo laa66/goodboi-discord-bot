@@ -1,6 +1,6 @@
 package com.laa66.goodboi.command;
 
-import com.laa66.goodboi.music.AudioPlayerRepository;
+import com.laa66.goodboi.music.AudioContextRepository;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 public class CommandFactory {
 
     private final AudioPlayerManager playerManager;
-    private final AudioPlayerRepository playerRepository;
+    private final AudioContextRepository playerRepository;
 
     public Command create(CommandType commandType, Object... args) {
         Command command;

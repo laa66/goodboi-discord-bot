@@ -1,6 +1,5 @@
 package com.laa66.goodboi.music;
 
-import com.laa66.goodboi.exception.CacheEntryNotFoundException;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,37 +12,37 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CaffeineAudioPlayerRepositoryUnitTest {
+class AudioContextCacheRepositoryUnitTest {
 
     @Mock
     Cache cache;
 
     @Mock
-    AudioPlayer player;
+    AudioContext context;
 
     @InjectMocks
-    CaffeineAudioPlayerRepository caffeineAudioPlayerRepository;
+    AudioContextCacheRepository audioContextCacheRepository;
 
     @Test
     void shouldGetPlayerValidGuildId() {
-        when(cache.get(1L, AudioPlayer.class)).thenReturn(player);
-        AudioPlayer result = caffeineAudioPlayerRepository.getPlayer(1L);
-        assertEquals(player, result);
+        when(cache.get(1L, AudioContext.class)).thenReturn(context);
+        AudioContext result = audioContextCacheRepository.getContext(1L);
+        assertEquals(context, result);
 
-        when(cache.get(2L, AudioPlayer.class)).thenReturn(null);
-        AudioPlayer resultEmpty = caffeineAudioPlayerRepository.getPlayer(2L);
+        when(cache.get(2L, AudioContext.class)).thenReturn(null);
+        AudioContext resultEmpty = audioContextCacheRepository.getContext(2L);
         assertNull(resultEmpty);
     }
 
     @Test
     void shouldSavePlayer() {
-        caffeineAudioPlayerRepository.savePlayer(1L, player);
-        verify(cache, times(1)).putIfAbsent(1L, player);
+        audioContextCacheRepository.saveContext(1L, context);
+        verify(cache, times(1)).putIfAbsent(1L, context);
     }
 
     @Test
     void shouldRemovePlayer() {
-        caffeineAudioPlayerRepository.removePlayer(1L);
+        audioContextCacheRepository.removeContext(1L);
         verify(cache, times(1)).evictIfPresent(1L);
     }
 

@@ -3,8 +3,8 @@ package com.laa66.goodboi.config;
 import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
-import com.laa66.goodboi.music.AudioPlayerRepository;
-import com.laa66.goodboi.music.CaffeineAudioPlayerRepository;
+import com.laa66.goodboi.music.AudioContextRepository;
+import com.laa66.goodboi.music.AudioContextCacheRepository;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -42,8 +42,8 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandFactory commandFactory(AudioPlayerManager audioPlayerManager, AudioPlayerRepository audioPlayerRepository) {
-        return new CommandFactory(audioPlayerManager, audioPlayerRepository);
+    public CommandFactory commandFactory(AudioPlayerManager audioPlayerManager, AudioContextRepository audioContextRepository) {
+        return new CommandFactory(audioPlayerManager, audioContextRepository);
     }
 
     @Bean
@@ -60,9 +60,9 @@ public class AppConfig {
     }
 
     @Bean
-    public AudioPlayerRepository audioPlayerRepository(CacheManager cacheManager) {
+    public AudioContextRepository audioPlayerRepository(CacheManager cacheManager) {
         final Cache cache = cacheManager.getCache("audio_player");
-        return new CaffeineAudioPlayerRepository(cache);
+        return new AudioContextCacheRepository(cache);
     }
 
 }

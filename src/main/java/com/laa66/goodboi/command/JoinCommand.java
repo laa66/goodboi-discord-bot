@@ -1,7 +1,6 @@
 package com.laa66.goodboi.command;
 
-import com.laa66.goodboi.music.AudioPlayerRepository;
-import com.laa66.goodboi.music.LavaPlayerAudioProvider;
+import com.laa66.goodboi.music.*;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -19,7 +18,7 @@ public class JoinCommand implements Command {
 
     private final MessageCreateEvent messageCreateEvent;
     private final AudioPlayerManager playerManager;
-    private final AudioPlayerRepository playerRepository;
+    private final AudioContextRepository playerRepository;
 
     @Override
     public Mono<Void> execute() {
@@ -38,12 +37,15 @@ public class JoinCommand implements Command {
         long guildId = messageCreateEvent.getGuildId()
                 .orElseThrow()
                 .asLong();
-        final AudioPlayer audioPlayer = Optional.ofNullable(playerRepository.getPlayer(guildId))
+        final AudioPlayer audioPlayer = Optional.ofNullable(playerRepository.getContext(guildId))
+                .map(AudioContext::getPlayer)
                 .orElseGet(() -> {
                     AudioPlayer player = playerManager.createPlayer();
-                    playerRepository.savePlayer(guildId, player);
+                    AudioContext context = AudioContext.createContext(player);
+                    playerRepository.saveContext(guildId, context);
                     return player;
                 });
         return new LavaPlayerAudioProvider(audioPlayer);
     }
+
 }
