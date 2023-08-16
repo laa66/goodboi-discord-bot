@@ -6,5 +6,8 @@ public enum CommandType {
     JOIN_CHANNEL,
     EXIT_CHANNEL,
     PLAY_MUSIC,
-    STOP_MUSIC
+    STOP_MUSIC,
+    RESUME_MUSIC,
+    SKIP_MUSIC,
+    CLEAR_SCHEDULER
 }

@@ -18,6 +18,7 @@ public class CommandFactory {
             case PUSH_MESSAGE, ZAHIR_MESSAGE -> command = new PushCommand((Message) args[0]);
             case JOIN_CHANNEL -> command = new JoinCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
             case PLAY_MUSIC -> command = new PlayCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
+            case SKIP_MUSIC -> command = new SkipCommand((MessageCreateEvent) args[0], contextRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;
