@@ -6,19 +6,19 @@ import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
-public class StopCommand implements Command {
+public class ResumeCommand implements Command {
 
     private final MessageCreateEvent event;
-    private final AudioContextRepository contextRepository;
+    private final AudioContextRepository repository;
 
     @Override
     public Mono<Void> execute() {
         return Mono.justOrEmpty(event.getGuildId()
                 .orElseThrow()
                 .asLong())
-                .flatMap(guildId -> Mono.just(contextRepository.getContext(guildId)))
+                .flatMap(guildId -> Mono.just(repository.getContext(guildId)))
                 .flatMap(context -> Mono.fromRunnable(() -> context.getScheduler()
-                                .stop(context.getPlayer())))
+                        .resume(context.getPlayer())))
                 .then();
     }
 }
