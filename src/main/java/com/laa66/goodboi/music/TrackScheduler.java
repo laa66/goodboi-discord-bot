@@ -32,17 +32,12 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventProce
 
     @Override
     public void stop(AudioPlayer player) {
-        log.info("Player stopped!");
-    }
-
-    @Override
-    public void pause(AudioPlayer player) {
-        log.info("Player paused!");
+        player.setPaused(true);
     }
 
     @Override
     public void resume(AudioPlayer player) {
-        log.info("Player resumed!");
+        player.setPaused(false);
     }
 
     @Override

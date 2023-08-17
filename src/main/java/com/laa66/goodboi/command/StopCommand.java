@@ -6,20 +6,20 @@ import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
-public class SkipCommand implements Command {
+public class StopCommand implements Command {
 
-    private final MessageCreateEvent messageCreateEvent;
+    private final MessageCreateEvent event;
     private final AudioContextRepository contextRepository;
 
     @Override
     public Mono<Void> execute() {
-        return Mono.justOrEmpty(messageCreateEvent.getGuildId()
+        return Mono.justOrEmpty(event.getGuildId()
                 .orElseThrow()
                 .asLong())
-                .flatMap(guildId -> Mono.justOrEmpty(contextRepository.getContext(guildId)))
+                .flatMap(guildId -> Mono.just(contextRepository.getContext(guildId)))
                 .flatMap(context -> Mono
                         .fromRunnable(() -> context.getScheduler()
-                                .skip(context.getPlayer())))
+                                .stop(context.getPlayer())))
                 .then();
     }
 }

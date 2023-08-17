@@ -15,11 +15,11 @@ import reactor.test.StepVerifier;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SkipCommandUnitTest {
+class StopCommandUnitTest {
 
     @Mock
     MessageCreateEvent event;
@@ -42,9 +42,9 @@ class SkipCommandUnitTest {
         when(repository.getContext(1)).thenReturn(context);
         when(context.getScheduler()).thenReturn(scheduler);
         when(context.getPlayer()).thenReturn(player);
-        doNothing().when(scheduler).skip(player);
+        doNothing().when(scheduler).stop(player);
 
-        SkipCommand command = new SkipCommand(event, repository);
+        StopCommand command = new StopCommand(event, repository);
 
         StepVerifier.create(command.execute())
                 .expectSubscription()
@@ -54,17 +54,14 @@ class SkipCommandUnitTest {
         verify(repository, times(1)).getContext(1);
         verify(context, times(1)).getScheduler();
         verify(context, times(1)).getPlayer();
-        verify(scheduler, times(1)).skip(player);
+        verify(scheduler, times(1)).stop(player);
     }
 
     @Test
     void shouldExecuteInvalidGuildId() {
         when(event.getGuildId()).thenReturn(Optional.empty());
-
-        SkipCommand command = new SkipCommand(event, repository);
+        StopCommand command = new StopCommand(event, repository);
         assertThrows(NoSuchElementException.class, command::execute);
-
-
         verify(event, times(1)).getGuildId();
     }
 }

@@ -39,4 +39,22 @@ class CommandFactoryUnitTest {
         assertEquals(JoinCommand.class, command.getClass());
     }
 
+    @Test
+    void shouldCreatePlayCommand() {
+        Command command = commandFactory.create(CommandType.PLAY_MUSIC, messageCreateEvent);
+        assertEquals(PlayCommand.class, command.getClass());
+    }
+
+    @Test
+    void shouldCreateSkipCommand() {
+        Command command = commandFactory.create(CommandType.SKIP_MUSIC, messageCreateEvent);
+        assertEquals(SkipCommand.class, command.getClass());
+    }
+
+    @Test
+    void shouldCreateStopCommand() {
+        Command command = commandFactory.create(CommandType.STOP_MUSIC, messageCreateEvent);
+        assertEquals(StopCommand.class, command.getClass());
+    }
+
 }

@@ -63,4 +63,15 @@ class TrackSchedulerUnitTest {
         verify(player, times(1)).playTrack(any());
     }
 
+    @Test
+    void shouldStop() {
+        scheduler.stop(player);
+        verify(player, times(1)).setPaused(true);
+    }
+
+    @Test
+    void shouldResume() {
+        scheduler.resume(player);
+        verify(player, times(1)).setPaused(false);
+    }
 }
