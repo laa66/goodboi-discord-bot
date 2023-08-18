@@ -7,6 +7,6 @@ public interface AudioEventProcessor {
     void stop(AudioPlayer player);
     void resume(AudioPlayer player);
     void queue(AudioPlayer player, AudioTrack track);
-    void clear();
+    void clean(AudioPlayer player);
     void skip(AudioPlayer player);
 }

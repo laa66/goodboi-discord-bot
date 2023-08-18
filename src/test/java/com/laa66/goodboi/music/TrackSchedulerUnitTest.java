@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 
 import java.util.stream.IntStream;
 
@@ -73,5 +74,13 @@ class TrackSchedulerUnitTest {
     void shouldResume() {
         scheduler.resume(player);
         verify(player, times(1)).setPaused(false);
+    }
+
+    @Test
+    void shouldClean() {
+        scheduler.clean(player);
+        scheduler.skip(player);
+        verify(player, times(1)).stopTrack();
+        verify(player, never()).playTrack(any());
     }
 }

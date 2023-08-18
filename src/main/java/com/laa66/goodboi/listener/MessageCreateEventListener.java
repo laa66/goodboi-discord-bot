@@ -31,8 +31,9 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
                         case "!join" -> command = commandFactory.create(JOIN_CHANNEL, event);
                         case "!play" -> command = commandFactory.create(PLAY_MUSIC, event);
                         case "!skip" -> command = commandFactory.create(SKIP_MUSIC, event);
-                        case "!stop" -> command = commandFactory.create(STOP_MUSIC, event);
+                        case "!clean" -> command = commandFactory.create(CLEAN_SCHEDULER, event);
                         case "!resume" -> command = commandFactory.create(RESUME_MUSIC, event);
+                        case "!stop" -> command = commandFactory.create(STOP_MUSIC, event);
                         default -> {
                             return Mono.empty();
                         }

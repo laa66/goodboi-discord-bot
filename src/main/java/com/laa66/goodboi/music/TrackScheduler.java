@@ -55,7 +55,9 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventProce
     }
 
     @Override
-    public void clear() {
+    public void clean(AudioPlayer player) {
+        trackQueue.clear();
+        player.stopTrack();
         log.info("Queue cleared!");
     }
 }

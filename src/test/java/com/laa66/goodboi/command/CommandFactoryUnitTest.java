@@ -57,4 +57,10 @@ class CommandFactoryUnitTest {
         assertEquals(StopCommand.class, command.getClass());
     }
 
+    @Test
+    void shouldCreateCleanCommand() {
+        Command command = commandFactory.create(CommandType.CLEAN_SCHEDULER, messageCreateEvent);
+        assertEquals(StopCommand.class, command.getClass());
+    }
+
 }

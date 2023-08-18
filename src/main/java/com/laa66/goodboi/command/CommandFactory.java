@@ -21,6 +21,7 @@ public class CommandFactory {
             case SKIP_MUSIC -> command = new SkipCommand((MessageCreateEvent) args[0], contextRepository);
             case STOP_MUSIC -> command = new StopCommand((MessageCreateEvent) args[0], contextRepository);
             case RESUME_MUSIC -> command = new ResumeCommand((MessageCreateEvent) args[0], contextRepository);
+            case CLEAN_SCHEDULER -> command = new CleanCommand((MessageCreateEvent) args[0], contextRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;
