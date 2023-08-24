@@ -22,6 +22,7 @@ public class CommandFactory {
             case STOP_MUSIC -> command = new StopCommand((MessageCreateEvent) args[0], contextRepository);
             case RESUME_MUSIC -> command = new ResumeCommand((MessageCreateEvent) args[0], contextRepository);
             case CLEAN_SCHEDULER -> command = new CleanCommand((MessageCreateEvent) args[0], contextRepository);
+            case PRINT_QUEUE -> command = new PrintQueueCommand((MessageCreateEvent) args[0], contextRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;

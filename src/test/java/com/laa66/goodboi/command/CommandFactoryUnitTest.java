@@ -60,7 +60,13 @@ class CommandFactoryUnitTest {
     @Test
     void shouldCreateCleanCommand() {
         Command command = commandFactory.create(CommandType.CLEAN_SCHEDULER, messageCreateEvent);
-        assertEquals(StopCommand.class, command.getClass());
+        assertEquals(CleanCommand.class, command.getClass());
+    }
+
+    @Test
+    void shouldCreateQueueCommand() {
+        Command command = commandFactory.create(CommandType.PRINT_QUEUE, messageCreateEvent);
+        assertEquals(PrintQueueCommand.class, command.getClass());
     }
 
 }

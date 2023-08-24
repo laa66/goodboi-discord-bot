@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -59,5 +60,9 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventProce
         trackQueue.clear();
         player.stopTrack();
         log.info("Queue cleared!");
+    }
+
+    public Collection<AudioTrack> getQueue() {
+        return this.trackQueue;
     }
 }
