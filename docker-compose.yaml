@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  goodboi_service:
+    build: .
+    restart: always
+    environment:
+      GOODBOI_DISCORD_TOKEN: ${GOODBOI_DISCORD_TOKEN}
+    volumes:
+      - .m2:/root/.m2
