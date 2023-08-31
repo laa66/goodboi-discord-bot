@@ -22,7 +22,7 @@ public class PrintQueueCommand implements Command {
                         .getChannel()
                         .flatMap(channel -> channel.createMessage(MessageCreateSpec
                                 .builder()
-                                .content("Goodboi music queue \uD83C\uDFB5 \n" + StringUtils.collectionToDelimitedString(getQueue()
+                                .content("\uD83C\uDFB5 Goodboi music queue\n" + StringUtils.collectionToDelimitedString(getQueue()
                                         .stream()
                                         .map(track -> track.getInfo().title)
                                         .toList(), "", "", "\n"))
@@ -31,7 +31,9 @@ public class PrintQueueCommand implements Command {
     }
 
     private Collection<AudioTrack> getQueue() {
-        return repository.getContext(event.getGuildId().orElseThrow().asLong())
+        return repository.getContext(event.getGuildId()
+                        .orElseThrow()
+                        .asLong())
                 .getScheduler()
                 .getQueue();
     }

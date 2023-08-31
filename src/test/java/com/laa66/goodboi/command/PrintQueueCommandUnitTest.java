@@ -60,7 +60,7 @@ class PrintQueueCommandUnitTest {
         when(channel.createMessage(MessageCreateSpec
                 .builder()
                 .content("""
-                        Goodboi music queue \uD83C\uDFB5\s
+                        \uD83C\uDFB5 Goodboi music queue
                         null
                         null
                         """)

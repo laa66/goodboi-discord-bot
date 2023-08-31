@@ -30,7 +30,7 @@ class CommandFactoryUnitTest {
 
     @Test
     void shouldCreateInvalidCommandType() {
-        assertThrows(IllegalArgumentException.class, () -> commandFactory.create(CommandType.EXIT_CHANNEL, message));
+        assertThrows(IllegalArgumentException.class, () -> commandFactory.create(CommandType.valueOf("Error"), message));
     }
 
     @Test
@@ -67,6 +67,13 @@ class CommandFactoryUnitTest {
     void shouldCreateQueueCommand() {
         Command command = commandFactory.create(CommandType.PRINT_QUEUE, messageCreateEvent);
         assertEquals(PrintQueueCommand.class, command.getClass());
+    }
+
+    @Test
+    void shouldCreateExitChannel() {
+        Command command = commandFactory.create(CommandType.EXIT_CHANNEL, messageCreateEvent);
+        assertEquals(ExitCommand.class, command.getClass());
+
     }
 
 }

@@ -25,6 +25,7 @@
 	</repositories>
 
 	<dependencies>
+
 		<!-- spring -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

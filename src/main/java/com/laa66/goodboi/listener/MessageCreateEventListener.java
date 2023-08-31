@@ -32,9 +32,10 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
                         case "!play" -> command = commandFactory.create(PLAY_MUSIC, event);
                         case "!skip" -> command = commandFactory.create(SKIP_MUSIC, event);
                         case "!clean" -> command = commandFactory.create(CLEAN_SCHEDULER, event);
-                        case "!resume" -> command = commandFactory.create(RESUME_MUSIC, event);
+                        case "!res" -> command = commandFactory.create(RESUME_MUSIC, event);
                         case "!stop" -> command = commandFactory.create(STOP_MUSIC, event);
                         case "!queue" -> command = commandFactory.create(PRINT_QUEUE, event);
+                        case "!exit" -> command = commandFactory.create(EXIT_CHANNEL, event);
                         default -> {
                             return Mono.empty();
                         }
