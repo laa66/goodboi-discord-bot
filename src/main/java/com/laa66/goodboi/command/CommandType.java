@@ -10,5 +10,6 @@ public enum CommandType {
     RESUME_MUSIC,
     SKIP_MUSIC,
     CLEAN_SCHEDULER,
-    PRINT_QUEUE
+    PRINT_QUEUE,
+    COMMAND_INFO
 }

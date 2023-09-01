@@ -26,6 +26,7 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
                     String[] splitMessage = message.getContent().split(" ");
                     Command command;
                     switch (splitMessage[0]) {
+                        case "!goodboi-command" -> command = commandFactory.create(COMMAND_INFO, message);
                         case "!push" -> command = commandFactory.create(PUSH_MESSAGE, message);
                         case "!zahir" -> command = commandFactory.create(ZAHIR_MESSAGE, message);
                         case "!join" -> command = commandFactory.create(JOIN_CHANNEL, event);

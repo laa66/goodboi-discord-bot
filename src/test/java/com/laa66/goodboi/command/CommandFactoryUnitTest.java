@@ -73,7 +73,12 @@ class CommandFactoryUnitTest {
     void shouldCreateExitChannel() {
         Command command = commandFactory.create(CommandType.EXIT_CHANNEL, messageCreateEvent);
         assertEquals(ExitCommand.class, command.getClass());
+    }
 
+    @Test
+    void shouldCreateGoodboiInfo() {
+        Command command = commandFactory.create(CommandType.COMMAND_INFO, message);
+        assertEquals(GoodboiInfoCommand.class, command.getClass());
     }
 
 }

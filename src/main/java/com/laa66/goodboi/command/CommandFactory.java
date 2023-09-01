@@ -15,6 +15,7 @@ public class CommandFactory {
     public Command create(CommandType commandType, Object... args) {
         Command command;
         switch (commandType) {
+            case COMMAND_INFO -> command = new GoodboiInfoCommand((Message) args[0]);
             case PUSH_MESSAGE, ZAHIR_MESSAGE -> command = new PushCommand((Message) args[0]);
             case JOIN_CHANNEL -> command = new JoinCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
             case PLAY_MUSIC -> command = new PlayCommand((MessageCreateEvent) args[0], playerManager, contextRepository);
