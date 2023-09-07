@@ -2,3 +2,5 @@
 bot:
   discord:
     token: ${GOODBOI_DISCORD_TOKEN}
+    dev:
+      guild-id: ${GOODBOI_GUILD_ID}

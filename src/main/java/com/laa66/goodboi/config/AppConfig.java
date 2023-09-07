@@ -1,6 +1,7 @@
 package com.laa66.goodboi.config;
 
 import com.laa66.goodboi.command.CommandFactory;
+import com.laa66.goodboi.discord.GuildCommandRegister;
 import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
 import com.laa66.goodboi.music.AudioContextRepository;
@@ -26,12 +27,18 @@ public class AppConfig {
     @Value("${bot.discord.token}")
     private String discordToken;
 
+    @Value("${bot.discord.dev.guild-id}")
+    private String devGuildId;
+
     @Bean
     public <T extends Event> GatewayDiscordClient gatewayDiscordClient(List<EventListener<T>> eventListeners) {
         GatewayDiscordClient client = DiscordClientBuilder.create(discordToken)
                 .build()
                 .login()
                 .block();
+
+        new GuildCommandRegister(client.getRestClient())
+                .registerCommands(devGuildId);
 
         eventListeners.forEach(eventListener -> client.on(eventListener.getEventType())
                 .flatMap(eventListener::process)
