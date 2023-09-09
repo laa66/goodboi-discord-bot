@@ -4,3 +4,14 @@ bot:
     token: ${GOODBOI_DISCORD_TOKEN}
     dev:
       guild-id: ${GOODBOI_GUILD_ID}
+
+# database
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/goodboi_db?allowPublicKeyRetrieval=true&useSSL=true
+    username: goodboi-root
+    password: goodboi-root
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 50
