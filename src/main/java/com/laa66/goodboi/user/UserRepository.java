@@ -7,6 +7,6 @@ import reactor.core.publisher.Flux;
 public interface UserRepository extends R2dbcRepository<User, Long> {
     Flux<User> findAllByGuildId(long guildId);
 
-    @Query("SELECT * FROM users WHERE guild_id = :guildId AND banned = true")
+    @Query("SELECT * FROM goodboi_db.users WHERE guild_id = :guildId AND banned = true")
     Flux<User> findAllBanned(long guildId);
 }
