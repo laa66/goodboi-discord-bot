@@ -1,8 +1,6 @@
 package com.laa66.goodboi.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,10 +9,14 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("users")
+@Builder
 public class User {
 
     @Id
     private long id;
+
+    @Column("guild_id")
+    private long guildId;
 
     @Column("discord_id")
     private long discordId;

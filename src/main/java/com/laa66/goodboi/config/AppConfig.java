@@ -6,6 +6,9 @@ import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
 import com.laa66.goodboi.music.AudioContextRepository;
 import com.laa66.goodboi.music.AudioContextCacheRepository;
+import com.laa66.goodboi.user.UserRepository;
+import com.laa66.goodboi.user.UserService;
+import com.laa66.goodboi.user.UserServiceImpl;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -46,6 +49,11 @@ public class AppConfig {
 
         client.onDisconnect().block();
         return client;
+    }
+
+    @Bean
+    public UserService userService(UserRepository userRepository) {
+        return new UserServiceImpl(userRepository);
     }
 
     @Bean
