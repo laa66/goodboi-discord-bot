@@ -12,7 +12,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> warn(Member member) {
-        return null;
+        return userRepository.findByGuildIdAndDiscordId(
+                member.getGuildId().asLong(), member.getUserData().id().asLong()
+                ).flatMap(user -> {
+                    user.setWarnCount(user.getWarnCount() + 1);
+                    if (user.getWarnCount() == 10) user.setBanned(true);
+                    return Mono.just(user);
+                }).defaultIfEmpty(User.builder()
+                        .id(0)
+                        .guildId(member.getGuildId().asLong())
+                        .discordId(member.getUserData().id().asLong())
+                        .username(member.getUserData().username())
+                        .warnCount(1)
+                        .banned(false)
+                        .build())
+                .doOnSuccess(userRepository::save)
+                .then();
     }
 
     @Override
