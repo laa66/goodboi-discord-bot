@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table("goodboi_db.users")
 @Builder
+@With
 public class User {
 
     @Id

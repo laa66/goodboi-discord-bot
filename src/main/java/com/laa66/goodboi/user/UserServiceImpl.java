@@ -12,13 +12,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> warn(Member member) {
-        return userRepository.findByGuildIdAndDiscordId(
-                member.getGuildId().asLong(), member.getUserData().id().asLong()
-                ).flatMap(user -> {
-                    user.setWarnCount(user.getWarnCount() + 1);
-                    if (user.getWarnCount() == 10) user.setBanned(true);
-                    return Mono.just(user);
-                }).defaultIfEmpty(User.builder()
+        return userRepository.findByGuildIdAndDiscordId(member.getGuildId().asLong(),
+                        member.getUserData().id().asLong())
+                .flatMap(user -> Mono.just(user.withWarnCount(user.getWarnCount() + 1)))
+                .flatMap(user -> Mono.just(user.getWarnCount() == 10 ? user.withBanned(true) : user)).defaultIfEmpty(User.builder()
                         .id(0)
                         .guildId(member.getGuildId().asLong())
                         .discordId(member.getUserData().id().asLong())
@@ -26,13 +23,16 @@ public class UserServiceImpl implements UserService {
                         .warnCount(1)
                         .banned(false)
                         .build())
-                .doOnSuccess(userRepository::save)
+                .flatMap(userRepository::save)
                 .then();
     }
 
     @Override
     public Mono<Void> ban(Member member) {
-        return null;
+        return userRepository.findByGuildIdAndDiscordId(member.getGuildId().asLong(),
+                        member.getUserData().id().asLong())
+                .flatMap(user -> userRepository.save(user.withBanned(true)))
+                .then();
     }
 
     @Override
