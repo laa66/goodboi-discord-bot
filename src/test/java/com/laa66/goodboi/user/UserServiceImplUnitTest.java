@@ -134,6 +134,57 @@ class UserServiceImplUnitTest {
         verify(userRepository, never()).save(any());
     }
 
+    @Test
+    void shouldUnbanUserExistsVulgarismBan() {
+        User user = createTestUser(10).withBanned(true);
+        when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
+                .thenReturn(Mono.just(user));
+        when(userRepository.save(any())).thenReturn(Mono.just(user));
+
+        Mono<Void> mono = userService.unban(member);
+        StepVerifier.create(mono)
+                .expectSubscription()
+                .verifyComplete();
+
+        verify(userRepository, times(1))
+                .findByGuildIdAndDiscordId(77, 1L);
+        verify(userRepository, times(1))
+                .save(argThat(arg -> !arg.isBanned() && arg.getWarnCount() == 0));
+    }
+
+    @Test
+    void shouldUnbanUserExistsOtherBan() {
+        User user = createTestUser(6).withBanned(true);
+        when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
+                .thenReturn(Mono.just(user));
+        when(userRepository.save(any())).thenReturn(Mono.just(user));
+
+        Mono<Void> mono = userService.unban(member);
+        StepVerifier.create(mono)
+                .expectSubscription()
+                .verifyComplete();
+
+        verify(userRepository, times(1))
+                .findByGuildIdAndDiscordId(77, 1L);
+        verify(userRepository, times(1))
+                .save(argThat(arg -> !arg.isBanned() && arg.getWarnCount() == 6));
+    }
+
+    @Test
+    void shouldUnbanUserNotExists() {
+        when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
+                .thenReturn(Mono.empty());
+
+        Mono<Void> mono = userService.unban(member);
+        StepVerifier.create(mono)
+                .expectSubscription()
+                .verifyComplete();
+
+        verify(userRepository, times(1))
+                .findByGuildIdAndDiscordId(77, 1L);
+        verify(userRepository, never()).save(any());
+    }
+
     private static User createTestUser(int warnCount) {
         return User.builder()
                 .id(1)

@@ -37,7 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> unban(Member member) {
-        return null;
+        return userRepository.findByGuildIdAndDiscordId(member.getGuildId().asLong(),
+                member.getUserData().id().asLong())
+                .flatMap(user -> userRepository.save(user
+                        .withBanned(false)
+                        .withWarnCount(user.getWarnCount() == 10 ? 0 : user.getWarnCount())))
+                .then();
     }
 
     @Override
