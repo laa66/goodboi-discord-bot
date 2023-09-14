@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -47,16 +49,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<User> findAllUsers(long guildId) {
-        return null;
+        return userRepository.findAllByGuildId(guildId);
     }
 
     @Override
     public Flux<User> findRudestUsers(long guildId) {
-        return null;
+        return userRepository.findAllByGuildId(guildId)
+                .sort(Comparator.comparingInt(User::getWarnCount))
+                .take(10);
     }
 
     @Override
     public Flux<User> findBannedUsers(long guildId) {
-        return null;
+        return userRepository.findAllBanned(guildId);
     }
 }
