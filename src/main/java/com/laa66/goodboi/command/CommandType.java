@@ -11,5 +11,6 @@ public enum CommandType {
     SKIP_MUSIC,
     CLEAN_SCHEDULER,
     PRINT_QUEUE,
-    COMMAND_INFO
+    COMMAND_INFO,
+    BANNED_USERS
 }

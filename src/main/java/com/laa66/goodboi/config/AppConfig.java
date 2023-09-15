@@ -57,8 +57,10 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandFactory commandFactory(AudioPlayerManager audioPlayerManager, AudioContextRepository audioContextRepository) {
-        return new CommandFactory(audioPlayerManager, audioContextRepository);
+    public CommandFactory commandFactory(AudioPlayerManager audioPlayerManager,
+                                         AudioContextRepository audioContextRepository,
+                                         UserService userService) {
+        return new CommandFactory(audioPlayerManager, audioContextRepository, userService);
     }
 
     @Bean
