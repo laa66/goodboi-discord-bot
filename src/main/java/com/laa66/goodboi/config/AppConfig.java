@@ -2,6 +2,8 @@ package com.laa66.goodboi.config;
 
 import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.discord.GuildCommandRegister;
+import com.laa66.goodboi.filter.MessageValidationService;
+import com.laa66.goodboi.filter.OffensiveMessageValidationService;
 import com.laa66.goodboi.listener.EventListener;
 import com.laa66.goodboi.listener.MessageCreateEventListener;
 import com.laa66.goodboi.music.AudioContextRepository;
@@ -49,6 +51,11 @@ public class AppConfig {
 
         client.onDisconnect().block();
         return client;
+    }
+
+    @Bean
+    public MessageValidationService messageValidationService(UserService userService) {
+        return new OffensiveMessageValidationService(userService);
     }
 
     @Bean

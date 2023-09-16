@@ -3,14 +3,16 @@ package com.laa66.goodboi.user;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
 import discord4j.discordjson.json.UserData;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,18 +29,9 @@ class UserServiceImplUnitTest {
     @InjectMocks
     UserServiceImpl userService;
 
-    @BeforeEach
-    void setup() {
-        when(member.getGuildId()).thenReturn(Snowflake.of(77L));
-        when(member.getUserData()).thenReturn(UserData.builder()
-                .id(1L)
-                .username("username")
-                .discriminator("disc")
-                .build());
-    }
-
     @Test
     void shouldWarnUserNotExists() {
+        createExpectations();
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.empty());
         when(userRepository.save(any())).thenReturn(Mono.just(User.builder().build()));
@@ -59,6 +52,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldWarnUserExistsNoBan() {
+        createExpectations();
         User user = createTestUser(6);
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
@@ -80,6 +74,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldWarnUserExistsBan() {
+        createExpectations();
         User user = createTestUser(9);
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
@@ -102,6 +97,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldBanUserExists() {
+        createExpectations();
         User user = createTestUser(6);
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
@@ -121,6 +117,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldBanUserNotExists() {
+        createExpectations();
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.empty());
 
@@ -136,6 +133,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldUnbanUserExistsVulgarismBan() {
+        createExpectations();
         User user = createTestUser(10).withBanned(true);
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
@@ -154,6 +152,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldUnbanUserExistsOtherBan() {
+        createExpectations();
         User user = createTestUser(6).withBanned(true);
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
@@ -172,6 +171,7 @@ class UserServiceImplUnitTest {
 
     @Test
     void shouldUnbanUserNotExists() {
+        createExpectations();
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.empty());
 
@@ -185,7 +185,69 @@ class UserServiceImplUnitTest {
         verify(userRepository, never()).save(any());
     }
 
-    private static User createTestUser(int warnCount) {
+    @Test
+    void shouldFindAllUsers() {
+        User user1 = createTestUser(5);
+        User user2 = createTestUser(1);
+        when(userRepository.findAllByGuildId(anyLong()))
+                .thenReturn(Flux.just(user1, user2));
+
+        Flux<User> flux = userService.findAllUsers(77);
+        StepVerifier.create(flux)
+                .expectSubscription()
+                .expectNext(user1, user2)
+                .verifyComplete();
+
+        verify(userRepository, times(1)).findAllByGuildId(77L);
+    }
+
+    @Test
+    void shouldFindRudestUsers() {
+        List<User> testUsers = List.of(createTestUser(6), createTestUser(7), createTestUser(1), createTestUser(1),
+                createTestUser(1), createTestUser(1), createTestUser(1), createTestUser(1),
+                createTestUser(1), createTestUser(1), createTestUser(10), createTestUser(1));
+        when(userRepository.findAllByGuildId(anyLong()))
+                .thenReturn(Flux.fromIterable(testUsers));
+
+        Flux<User> flux = userService.findRudestUsers(77L);
+        StepVerifier.create(flux)
+                .expectSubscription()
+                .assertNext(user -> assertEquals(10, user.getWarnCount()))
+                .assertNext(user -> assertEquals(7, user.getWarnCount()))
+                .assertNext(user -> assertEquals(6, user.getWarnCount()))
+                .expectNextCount(7)
+                .verifyComplete();
+
+        verify(userRepository, times(1)).findAllByGuildId(77L);
+    }
+
+    @Test
+    void shouldFindBannedUsers() {
+        List<User> testUsers = List.of(
+                createTestUser(10).withBanned(true),
+                createTestUser(5).withBanned(true));
+        when(userRepository.findAllBanned(anyLong()))
+                .thenReturn(Flux.fromIterable(testUsers));
+
+        Flux<User> flux = userService.findBannedUsers(77L);
+        StepVerifier.create(flux)
+                .expectSubscription()
+                .expectNextCount(2)
+                .verifyComplete();
+
+    }
+
+    // helpers
+    private void createExpectations() {
+        when(member.getGuildId()).thenReturn(Snowflake.of(77L));
+        when(member.getUserData()).thenReturn(UserData.builder()
+                .id(1L)
+                .username("username")
+                .discriminator("disc")
+                .build());
+    }
+
+    private User createTestUser(int warnCount) {
         return User.builder()
                 .id(1)
                 .guildId(77L)
