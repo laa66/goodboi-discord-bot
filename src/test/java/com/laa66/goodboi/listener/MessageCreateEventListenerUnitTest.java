@@ -3,6 +3,7 @@ package com.laa66.goodboi.listener;
 import com.laa66.goodboi.command.Command;
 import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.command.CommandType;
+import com.laa66.goodboi.filter.MessageValidationService;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
@@ -21,6 +22,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MessageCreateEventListenerUnitTest {
+
+    @Mock
+    MessageValidationService validationService;
 
     @Mock
     MessageCreateEvent event;
@@ -47,6 +51,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessValidPushCommand() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);
         when(message.isPinned()).thenReturn(false);
@@ -71,6 +76,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessValidJoinCommand() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);
         when(message.isPinned()).thenReturn(false);
@@ -95,6 +101,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessInvalidCommandUserIsBot() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(event.getMessage()).thenReturn(message);
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(true);
@@ -109,6 +116,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessInvalidCommandIsPinned() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(event.getMessage()).thenReturn(message);
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);
@@ -124,6 +132,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessInvalidCommandNotStartsWith() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(event.getMessage()).thenReturn(message);
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);
@@ -140,6 +149,7 @@ class MessageCreateEventListenerUnitTest {
 
     @Test
     void shouldProcessInvalidCommand() {
+        when(validationService.filterMessage(message)).thenReturn(Mono.just(message));
         when(event.getMessage()).thenReturn(message);
         when(message.getAuthor()).thenReturn(Optional.of(user));
         when(user.isBot()).thenReturn(false);

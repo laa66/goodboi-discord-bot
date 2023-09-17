@@ -1,6 +1,9 @@
 package com.laa66.goodboi.user;
 
 import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.MessageCreateSpec;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,11 +16,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Mono<Void> warn(Member member) {
+    public Mono<Void> warn(Member member, Message message) {
         return userRepository.findByGuildIdAndDiscordId(member.getGuildId().asLong(),
                         member.getUserData().id().asLong())
                 .flatMap(user -> Mono.just(user.withWarnCount(user.getWarnCount() + 1)))
-                .flatMap(user -> Mono.just(user.getWarnCount() == 10 ? user.withBanned(true) : user)).defaultIfEmpty(User.builder()
+                .flatMap(user -> Mono.just(user.getWarnCount() == 10 ? user.withBanned(true) : user))
+                .defaultIfEmpty(User.builder()
                         .id(0)
                         .guildId(member.getGuildId().asLong())
                         .discordId(member.getUserData().id().asLong())
@@ -26,7 +30,9 @@ public class UserServiceImpl implements UserService {
                         .banned(false)
                         .build())
                 .flatMap(userRepository::save)
-                .then();
+                .flatMap(user -> message
+                        .getChannel()
+                        .flatMap(channel -> sendWarnMessage(channel, user)));
     }
 
     @Override
@@ -62,5 +68,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Flux<User> findBannedUsers(long guildId) {
         return userRepository.findAllBanned(guildId);
+    }
+
+    private Mono<Void> sendWarnMessage(MessageChannel channel, User user) {
+        return channel.createMessage(MessageCreateSpec.builder()
+                .content("<@" + user.getDiscordId() + "> have been warned " + user.getWarnCount() + " times!")
+                .build())
+                .then();
     }
 }

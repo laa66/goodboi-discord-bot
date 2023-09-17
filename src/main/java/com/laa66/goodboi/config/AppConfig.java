@@ -71,8 +71,8 @@ public class AppConfig {
     }
 
     @Bean
-    public MessageCreateEventListener messageCreateEventListener(CommandFactory commandFactory) {
-        return new MessageCreateEventListener(commandFactory);
+    public MessageCreateEventListener messageCreateEventListener(CommandFactory commandFactory, MessageValidationService messageValidationService) {
+        return new MessageCreateEventListener(commandFactory, messageValidationService);
     }
 
     @Bean

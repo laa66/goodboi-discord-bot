@@ -5,5 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface MessageValidationService {
 
-    Mono<Void> filterMessage(Message message);
+    Mono<Message> filterMessage(Message message);
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -19,19 +20,19 @@ public class OffensiveMessageValidationService implements MessageValidationServi
     private final UserService userService;
 
     @Override
-    public Mono<Void> filterMessage(Message message) {
+    public Mono<Message> filterMessage(Message message) {
         return validateMessage(message.getContent())
                 .flatMap(isOffensive -> isOffensive
-                        ? message.getAuthorAsMember().flatMap(userService::warn)
-                        : Mono.empty());
+                        ? message.getAuthorAsMember().flatMap(member -> userService.warn(member, message))
+                        : Mono.empty())
+                .then(Mono.just(message));
     }
 
     private Mono<Boolean> validateMessage(String content) {
-        return Mono.just(getBadWords()
-                .stream()
-                .anyMatch(word -> content
-                        .toLowerCase()
-                        .contains(word.toLowerCase())));
+        return Flux.fromArray(content.split("\\s+"))
+                .any(word -> getBadWords()
+                        .stream()
+                        .anyMatch(word::equalsIgnoreCase));
     }
 
     private Collection<String> getBadWords() {

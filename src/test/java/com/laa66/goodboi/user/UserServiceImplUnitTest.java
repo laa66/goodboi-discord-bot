@@ -2,6 +2,9 @@ package com.laa66.goodboi.user;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.UserData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +24,13 @@ import static org.mockito.Mockito.*;
 class UserServiceImplUnitTest {
 
     @Mock
+    Message message;
+
+    @Mock
     Member member;
+
+    @Mock
+    MessageChannel channel;
 
     @Mock
     UserRepository userRepository;
@@ -35,8 +44,10 @@ class UserServiceImplUnitTest {
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.empty());
         when(userRepository.save(any())).thenReturn(Mono.just(User.builder().build()));
+        when(message.getChannel()).thenReturn(Mono.just(channel));
+        when(channel.createMessage(any(MessageCreateSpec.class))).thenReturn(Mono.empty());
 
-        Mono<Void> mono = userService.warn(member);
+        Mono<Void> mono = userService.warn(member, message);
         StepVerifier.create(mono)
                 .expectSubscription()
                 .verifyComplete();
@@ -57,8 +68,10 @@ class UserServiceImplUnitTest {
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
         when(userRepository.save(any())).thenReturn(Mono.just(user));
+        when(message.getChannel()).thenReturn(Mono.just(channel));
+        when(channel.createMessage(any(MessageCreateSpec.class))).thenReturn(Mono.empty());
 
-        Mono<Void> mono = userService.warn(member);
+        Mono<Void> mono = userService.warn(member, message);
         StepVerifier.create(mono)
                 .expectSubscription()
                 .verifyComplete();
@@ -79,8 +92,10 @@ class UserServiceImplUnitTest {
         when(userRepository.findByGuildIdAndDiscordId(anyLong(), anyLong()))
                 .thenReturn(Mono.just(user));
         when(userRepository.save(any())).thenReturn(Mono.just(user));
+        when(message.getChannel()).thenReturn(Mono.just(channel));
+        when(channel.createMessage(any(MessageCreateSpec.class))).thenReturn(Mono.empty());
 
-        Mono<Void> mono = userService.warn(member);
+        Mono<Void> mono = userService.warn(member, message);
         StepVerifier.create(mono)
                 .expectSubscription()
                 .verifyComplete();

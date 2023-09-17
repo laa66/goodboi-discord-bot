@@ -32,26 +32,28 @@ class OffensiveMessageValidationServiceUnitTest {
     void shouldFilterMessageOffensive() {
         when(message.getContent()).thenReturn("random if some l2,11m2 ass");
         when(message.getAuthorAsMember()).thenReturn(Mono.just(member));
-        when(userService.warn(member)).thenReturn(Mono.empty());
+        when(userService.warn(member, message)).thenReturn(Mono.empty());
 
-        Mono<Void> mono = validationService.filterMessage(message);
+        Mono<Message> mono = validationService.filterMessage(message);
         StepVerifier.create(mono)
                 .expectSubscription()
+                .expectNext(message)
                 .verifyComplete();
 
-        verify(userService, times(1)).warn(member);
+        verify(userService, times(1)).warn(member, message);
     }
 
     @Test
     void shouldFilterMessageNotOffensive() {
         when(message.getContent()).thenReturn("random if some l2,11m2");
 
-        Mono<Void> mono = validationService.filterMessage(message);
+        Mono<Message> mono = validationService.filterMessage(message);
         StepVerifier.create(mono)
                 .expectSubscription()
+                .expectNext(message)
                 .verifyComplete();
 
-        verify(userService, never()).warn(any());
+        verify(userService, never()).warn(any(), any());
     }
 
 }

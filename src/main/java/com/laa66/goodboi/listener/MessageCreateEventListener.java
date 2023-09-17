@@ -2,6 +2,7 @@ package com.laa66.goodboi.listener;
 
 import com.laa66.goodboi.command.Command;
 import com.laa66.goodboi.command.CommandFactory;
+import com.laa66.goodboi.filter.MessageValidationService;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import static com.laa66.goodboi.command.CommandType.*;
 public class MessageCreateEventListener implements EventListener<MessageCreateEvent> {
 
     private final CommandFactory commandFactory;
+    private final MessageValidationService validationService;
+
 
     @Override
     public Class<MessageCreateEvent> getEventType() {
@@ -47,6 +50,7 @@ public class MessageCreateEventListener implements EventListener<MessageCreateEv
 
     private Mono<Message> filterMessage(MessageCreateEvent event) {
         return Mono.just(event.getMessage())
+                .flatMap(validationService::filterMessage)
                 .filter(message -> !message.getAuthor().orElseThrow().isBot())
                 .filter(message -> !message.isPinned())
                 .filter(message -> message.getContent().startsWith("!"));
