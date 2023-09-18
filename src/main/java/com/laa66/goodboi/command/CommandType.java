@@ -12,5 +12,7 @@ public enum CommandType {
     CLEAN_SCHEDULER,
     PRINT_QUEUE,
     COMMAND_INFO,
-    BANNED_USERS
+    BANNED_USERS,
+    WARNED_USERS,
+    RUDEST_USERS
 }
