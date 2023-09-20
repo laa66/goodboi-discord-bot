@@ -29,6 +29,7 @@ public class CommandFactory {
             case PRINT_QUEUE -> command = new PrintQueueCommand((MessageCreateEvent) args[0], contextRepository);
             case EXIT_CHANNEL -> command = new ExitCommand((MessageCreateEvent) args[0]);
             case BANNED_USERS -> command = new FindBannedCommand((ChatInputInteractionEvent) args[0], userService);
+            case WARNED_USERS -> command = new FindWarnedCommand((ChatInputInteractionEvent) args[0], userService);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;

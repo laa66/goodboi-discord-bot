@@ -18,12 +18,12 @@ import reactor.test.StepVerifier;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
-class FindBannedCommandUnitTest {
+class FindWarnedCommandUnitTest {
 
     @Mock
     InteractionCallbackSpecDeferReplyMono callbackSpecDeferReplyMono;
@@ -40,6 +40,7 @@ class FindBannedCommandUnitTest {
     @Mock
     Interaction interaction;
 
+
     @Test
     void shouldExecute() {
         User user1 = User.builder()
@@ -48,7 +49,7 @@ class FindBannedCommandUnitTest {
                 .discordId(1L)
                 .username("username1")
                 .warnCount(4)
-                .banned(true)
+                .banned(false)
                 .build();
         User user2 = User.builder()
                 .id(2)
@@ -56,17 +57,17 @@ class FindBannedCommandUnitTest {
                 .discordId(2L)
                 .username("username2")
                 .warnCount(2)
-                .banned(true)
+                .banned(false)
                 .build();
         when(event.createFollowup(any(InteractionFollowupCreateSpec.class)))
                 .thenReturn(Mono.just(message));
         when(event.deferReply()).thenReturn(callbackSpecDeferReplyMono);
-        when(userService.findBannedUsers(anyLong())).thenReturn(Flux.just(user1, user2));
+        when(userService.findAllUsers(anyLong())).thenReturn(Flux.just(user1, user2));
         when(event.getInteraction()).thenReturn(interaction);
         when(interaction.getGuildId()).thenReturn(Optional.of(Snowflake.of(77L)));
         when(callbackSpecDeferReplyMono.then(any())).thenReturn(Mono.empty());
 
-        FindBannedCommand command = new FindBannedCommand(event, userService);
+        FindWarnedCommand command = new FindWarnedCommand(event, userService);
         Mono<Void> mono = command.execute();
         StepVerifier.create(mono)
                 .expectSubscription()
@@ -74,7 +75,7 @@ class FindBannedCommandUnitTest {
 
         verify(event, times(1)).deferReply();
         verify(event, times(1)).createFollowup(any(InteractionFollowupCreateSpec.class));
-        verify(userService, times(1)).findBannedUsers(77L);
+        verify(userService, times(1)).findAllUsers(77L);
         verify(event, times(1)).getInteraction();
     }
 
