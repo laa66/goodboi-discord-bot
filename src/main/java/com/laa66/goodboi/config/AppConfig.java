@@ -4,9 +4,7 @@ import com.laa66.goodboi.command.CommandFactory;
 import com.laa66.goodboi.discord.GuildCommandRegister;
 import com.laa66.goodboi.filter.MessageValidationService;
 import com.laa66.goodboi.filter.OffensiveMessageValidationService;
-import com.laa66.goodboi.listener.ApplicationCommandEventListener;
-import com.laa66.goodboi.listener.EventListener;
-import com.laa66.goodboi.listener.MessageCreateEventListener;
+import com.laa66.goodboi.listener.*;
 import com.laa66.goodboi.music.AudioContextRepository;
 import com.laa66.goodboi.music.AudioContextCacheRepository;
 import com.laa66.goodboi.user.UserRepository;
@@ -69,6 +67,16 @@ public class AppConfig {
                                          AudioContextRepository audioContextRepository,
                                          UserService userService) {
         return new CommandFactory(audioPlayerManager, audioContextRepository, userService);
+    }
+
+    @Bean
+    public BanEventListener banEventListener(UserService userService) {
+        return new BanEventListener(userService);
+    }
+
+    @Bean
+    public UnbanEventListener unbanEventListener(UserService userService) {
+        return new UnbanEventListener(userService);
     }
 
     @Bean
