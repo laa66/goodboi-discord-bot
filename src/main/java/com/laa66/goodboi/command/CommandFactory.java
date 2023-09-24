@@ -27,7 +27,7 @@ public class CommandFactory {
             case RESUME_MUSIC -> command = new ResumeCommand((MessageCreateEvent) args[0], contextRepository);
             case CLEAN_SCHEDULER -> command = new CleanCommand((MessageCreateEvent) args[0], contextRepository);
             case PRINT_QUEUE -> command = new PrintQueueCommand((MessageCreateEvent) args[0], contextRepository);
-            case EXIT_CHANNEL -> command = new ExitCommand((MessageCreateEvent) args[0]);
+            case EXIT_CHANNEL -> command = new ExitCommand((MessageCreateEvent) args[0], contextRepository);
             case BANNED_USERS -> command = new FindBannedCommand((ChatInputInteractionEvent) args[0], userService);
             case WARNED_USERS -> command = new FindWarnedCommand((ChatInputInteractionEvent) args[0], userService);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
