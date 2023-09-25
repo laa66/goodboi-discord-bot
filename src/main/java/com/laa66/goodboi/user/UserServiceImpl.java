@@ -3,6 +3,7 @@ package com.laa66.goodboi.user;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.BanQuerySpec;
 import discord4j.core.spec.MessageCreateSpec;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -19,8 +20,16 @@ public class UserServiceImpl implements UserService {
     public Mono<Void> warn(Member member, Message message) {
         return userRepository.findByGuildIdAndDiscordId(member.getGuildId().asLong(),
                         member.getUserData().id().asLong())
-                .flatMap(user -> Mono.just(user.withWarnCount(user.getWarnCount() + 1)))
-                .flatMap(user -> Mono.just(user.getWarnCount() == 10 ? user.withBanned(true) : user))
+                .flatMap(user -> {
+                    User updatedUser = user.withWarnCount(user.getWarnCount() + 1);
+                    if (updatedUser.getWarnCount() >= 10) {
+                        return member.ban(BanQuerySpec.builder()
+                                        .reason("Profanity")
+                                        .build())
+                                .thenReturn(updatedUser.withBanned(true));
+                    }
+                    return Mono.just(updatedUser);
+                })
                 .defaultIfEmpty(User.builder()
                         .id(0)
                         .guildId(member.getGuildId().asLong())

@@ -43,7 +43,7 @@ class ExitCommandUnitTest {
     VoiceConnection voiceConnection;
 
     @Test
-    void shouldExecute() {
+    void shouldExecuteDisconnectSuccess() {
         when(event.getMember()).thenReturn(Optional.of(member));
         when(member.getVoiceState()).thenReturn(Mono.just(voiceState));
         when(voiceState.getChannel()).thenReturn(Mono.just(voiceChannel));

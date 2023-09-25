@@ -4,6 +4,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.BanQuerySpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.UserData;
 import org.junit.jupiter.api.Test;
@@ -94,12 +95,14 @@ class UserServiceImplUnitTest {
         when(userRepository.save(any())).thenReturn(Mono.just(user));
         when(message.getChannel()).thenReturn(Mono.just(channel));
         when(channel.createMessage(any(MessageCreateSpec.class))).thenReturn(Mono.empty());
+        when(member.ban(any(BanQuerySpec.class))).thenReturn(Mono.empty());
 
         Mono<Void> mono = userService.warn(member, message);
         StepVerifier.create(mono)
                 .expectSubscription()
                 .verifyComplete();
 
+        verify(member, times(1)).ban(BanQuerySpec.builder().reason("Profanity").build());
         verify(userRepository, times(1))
                 .findByGuildIdAndDiscordId(77, 1L);
         verify(userRepository, times(1))
