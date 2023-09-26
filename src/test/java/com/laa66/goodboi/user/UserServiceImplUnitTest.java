@@ -57,9 +57,9 @@ class UserServiceImplUnitTest {
                 .findByGuildIdAndDiscordId(77, 1L);
         verify(userRepository, times(1))
                 .save(argThat(arg -> arg.getId() == 0
-                && arg.getWarnCount() == 1
-                && arg.getDiscordId() == 1
-                && !arg.isBanned()));
+                        && arg.getWarnCount() == 1
+                        && arg.getDiscordId() == 1
+                        && !arg.isBanned()));
     }
 
     @Test
