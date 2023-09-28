@@ -10,6 +10,8 @@ import com.laa66.goodboi.music.AudioContextCacheRepository;
 import com.laa66.goodboi.user.UserRepository;
 import com.laa66.goodboi.user.UserService;
 import com.laa66.goodboi.user.UserServiceImpl;
+import com.laa66.goodboi.voiceactivity.VoiceChannelActivityCacheRepository;
+import com.laa66.goodboi.voiceactivity.VoiceChannelActivityRepository;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -95,6 +97,12 @@ public class AppConfig {
         playerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
         AudioSourceManagers.registerRemoteSources(playerManager);
         return playerManager;
+    }
+
+    @Bean
+    public VoiceChannelActivityRepository voiceChannelActivityRepository(CacheManager cacheManager) {
+        final Cache cache = cacheManager.getCache("voice_activity");
+        return new VoiceChannelActivityCacheRepository(cache);
     }
 
     @Bean
