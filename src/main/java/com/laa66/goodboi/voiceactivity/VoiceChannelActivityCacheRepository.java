@@ -1,5 +1,6 @@
 package com.laa66.goodboi.voiceactivity;
 
+import com.laa66.goodboi.exception.CacheNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.Cache;
 import reactor.core.publisher.Mono;
@@ -13,7 +14,11 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
 
     @Override
     public Mono<Void> saveVoiceActivity(long guildId, long discordId, VoiceActivity voiceActivity) {
-        return Mono.empty();
+        String key = guildId + "#" + discordId;
+        return Mono.fromRunnable(() -> Optional.ofNullable(cache)
+                .ifPresentOrElse(cache -> cache.put(key, VoiceActivity.class), () -> {
+                    throw new CacheNotFoundException("Voice Activity not found in repository");
+                }));
     }
 
     @Override
