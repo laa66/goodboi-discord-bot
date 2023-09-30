@@ -12,6 +12,8 @@ import com.laa66.goodboi.user.UserService;
 import com.laa66.goodboi.user.UserServiceImpl;
 import com.laa66.goodboi.voiceactivity.VoiceChannelActivityCacheRepository;
 import com.laa66.goodboi.voiceactivity.VoiceChannelActivityRepository;
+import com.laa66.goodboi.voiceactivity.VoiceChannelActivityTrackingService;
+import com.laa66.goodboi.voiceactivity.VoiceChannelActivityTrackingServiceImpl;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -103,6 +105,12 @@ public class AppConfig {
     public VoiceChannelActivityRepository voiceChannelActivityRepository(CacheManager cacheManager) {
         final Cache cache = cacheManager.getCache("voice_activity");
         return new VoiceChannelActivityCacheRepository(cache);
+    }
+
+    @Bean
+    public VoiceChannelActivityTrackingService voiceChannelActivityTrackingService(VoiceChannelActivityRepository
+                                                                                   voiceChannelActivityRepository) {
+        return new VoiceChannelActivityTrackingServiceImpl(voiceChannelActivityRepository);
     }
 
     @Bean
