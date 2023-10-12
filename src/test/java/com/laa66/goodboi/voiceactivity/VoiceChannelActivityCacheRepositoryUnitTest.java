@@ -52,14 +52,14 @@ class VoiceChannelActivityCacheRepositoryUnitTest {
 
     @Test
     void shouldSaveVoiceActivityExist() {
-        doNothing().when(cache).put("77#212", VoiceActivity.class);
+        doNothing().when(cache).put("77#212", voiceActivity);
 
         Mono<Void> mono = repository.saveVoiceActivity(77, 212, voiceActivity);
         StepVerifier.create(mono)
                 .expectSubscription()
                 .verifyComplete();
 
-        verify(cache, times(1)).put("77#212", VoiceActivity.class);
+        verify(cache, times(1)).put("77#212", voiceActivity);
     }
 
     @Test

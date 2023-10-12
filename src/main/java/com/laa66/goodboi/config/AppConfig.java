@@ -71,6 +71,11 @@ public class AppConfig {
     }
 
     @Bean
+    public VoiceStateUpdateEventListener voiceStateUpdateEventListener(VoiceChannelActivityTrackingService voiceChannelActivityTrackingService) {
+        return new VoiceStateUpdateEventListener(voiceChannelActivityTrackingService);
+    }
+
+    @Bean
     public BanEventListener banEventListener(UserService userService) {
         return new BanEventListener(userService);
     }

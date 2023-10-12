@@ -16,7 +16,7 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
     public Mono<Void> saveVoiceActivity(long guildId, long discordId, VoiceActivity voiceActivity) {
         String key = guildId + "#" + discordId;
         return Mono.fromRunnable(() -> Optional.ofNullable(cache)
-                .ifPresentOrElse(cache -> cache.put(key, VoiceActivity.class), () -> {
+                .ifPresentOrElse(cache -> cache.put(key, voiceActivity), () -> {
                     throw new CacheNotFoundException("Voice Activity not found in repository");
                 }));
     }
