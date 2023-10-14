@@ -10,6 +10,11 @@ import org.springframework.cache.Cache;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 
@@ -26,51 +31,36 @@ class VoiceChannelActivityCacheRepositoryUnitTest {
     VoiceChannelActivityCacheRepository repository;
 
     @Test
-    void shouldGetVoiceActivityExist() {
-        when(cache.get("77#212", VoiceActivity.class)).thenReturn(voiceActivity);
-
-        Mono<VoiceActivity> mono = repository.getVoiceActivity(77, 212);
-        StepVerifier.create(mono)
-                .expectSubscription()
-                .expectNext(voiceActivity)
-                .verifyComplete();
-
-        verify(cache, times(1)).get("77#212", VoiceActivity.class);
+    void shouldGetVoiceActivityEmptyGuildVoiceActivityMap() {
+        when(cache.get(1L, Map.class)).thenReturn(null);
+        VoiceActivity activity = repository.getVoiceActivity(1L, 25L);
+        assertNull(activity);
+        verify(cache, times(1)).put(eq(1L), any(Map.class));
     }
 
     @Test
-    void shouldGetVoiceActivityNotExist() {
-        when(cache.get("77#212", VoiceActivity.class)).thenReturn(null);
-
-        Mono<VoiceActivity> mono = repository.getVoiceActivity(77, 212);
-        StepVerifier.create(mono)
-                .expectSubscription()
-                .verifyComplete();
-
-        verify(cache, times(1)).get("77#212", VoiceActivity.class);
+    void shouldGetVoiceActivityPresentGuildVoiceActivityMap() {
+        Map<Long, VoiceActivity> map = Map.of(25L, voiceActivity);
+        when(cache.get(1L, Map.class)).thenReturn(map);
+        VoiceActivity activity = repository.getVoiceActivity(1L, 25L);
+        assertEquals(voiceActivity, activity);
     }
 
     @Test
-    void shouldSaveVoiceActivityExist() {
-        doNothing().when(cache).put("77#212", voiceActivity);
-
-        Mono<Void> mono = repository.saveVoiceActivity(77, 212, voiceActivity);
-        StepVerifier.create(mono)
-                .expectSubscription()
-                .verifyComplete();
-
-        verify(cache, times(1)).put("77#212", voiceActivity);
+    void shouldGetGuildVoiceActivity() {
+        Map<Long, VoiceActivity> map = Map.of(25L, voiceActivity);
+        when(cache.get(1L, Map.class)).thenReturn(map);
+        Map<Long, VoiceActivity> activity = repository.getGuildVoiceActivity(1L);
+        assertEquals(map, activity);
     }
 
     @Test
-    void shouldSaveVoiceActivityNotExist() {
-        VoiceChannelActivityRepository nullCacheRepository = new VoiceChannelActivityCacheRepository(null);
-
-        Mono<Void> mono = nullCacheRepository.saveVoiceActivity(77, 212, voiceActivity);
-        StepVerifier.create(mono)
-                .expectSubscription()
-                .expectError(CacheNotFoundException.class)
-                .verify();
+    void shouldSaveVoiceActivity() {
+        Map<Long, VoiceActivity> map = new HashMap<>();
+        map.put(25L, voiceActivity);
+        when(cache.get(1L, Map.class)).thenReturn(map);
+        Map<Long, VoiceActivity> activity = repository.saveVoiceActivity(1L, 27L, voiceActivity);
+        assertEquals(2, activity.size());
     }
 
 }

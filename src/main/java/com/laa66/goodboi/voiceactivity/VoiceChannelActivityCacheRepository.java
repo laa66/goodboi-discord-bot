@@ -1,11 +1,10 @@
 package com.laa66.goodboi.voiceactivity;
 
-import com.laa66.goodboi.exception.CacheNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.Cache;
-import reactor.core.publisher.Mono;
+import org.springframework.cache.annotation.CachePut;
 
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 public class VoiceChannelActivityCacheRepository implements VoiceChannelActivityRepository {
@@ -13,20 +12,27 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
     private final Cache cache;
 
     @Override
-    public Mono<Void> saveVoiceActivity(long guildId, long discordId, VoiceActivity voiceActivity) {
-        String key = guildId + "#" + discordId;
-        return Mono.fromRunnable(() -> Optional.ofNullable(cache)
-                .ifPresentOrElse(cache -> cache.put(key, voiceActivity), () -> {
-                    throw new CacheNotFoundException("Voice Activity not found in repository");
-                }));
+    @CachePut(value = "#voice_activity", key = "#guild_id")
+    public Map<Long, VoiceActivity> saveVoiceActivity(long guildId, long discordId, VoiceActivity voiceActivity) {
+        Map<Long, VoiceActivity> guildVoiceActivity = getGuildVoiceActivity(guildId);
+        guildVoiceActivity.put(discordId, voiceActivity);
+        return guildVoiceActivity;
     }
 
     @Override
-    public Mono<VoiceActivity> getVoiceActivity(long guildId, long discordId) {
-        String key = guildId + "#" + discordId;
-        return Mono.justOrEmpty(Optional
-                .ofNullable(cache)
-                .map(cache -> cache.get(key, VoiceActivity.class))
-                .orElse(null));
+    @SuppressWarnings("unchecked")
+    public Map<Long, VoiceActivity> getGuildVoiceActivity(long guildId) {
+        return cache.get(guildId, Map.class);
+    }
+
+    @Override
+    public VoiceActivity getVoiceActivity(long guildId, long discordId) {
+        Map<Long, VoiceActivity> guildVoiceActivityMap = getGuildVoiceActivity(guildId);
+        return Optional.ofNullable(guildVoiceActivityMap)
+                .map(voiceActivityMap -> voiceActivityMap.get(discordId))
+                .orElseGet(() -> {
+                   cache.put(guildId, new HashMap<Long, VoiceActivity>());
+                   return null;
+                });
     }
 }

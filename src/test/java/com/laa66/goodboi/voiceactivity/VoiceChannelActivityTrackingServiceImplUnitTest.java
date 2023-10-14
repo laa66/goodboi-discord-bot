@@ -3,6 +3,7 @@ package com.laa66.goodboi.voiceactivity;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import discord4j.core.object.VoiceState;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -25,6 +28,9 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
     @Mock
     VoiceState voiceState;
 
+    @Mock
+    Map<Long, VoiceActivity> voiceActivityMap;
+
     @InjectMocks
     VoiceChannelActivityTrackingServiceImpl trackingService;
 
@@ -36,9 +42,9 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
         when(voiceState.getGuildId()).thenReturn(Snowflake.of("1"));
         when(voiceState.getUserId()).thenReturn(Snowflake.of("2"));
         when(activityRepository.getVoiceActivity(anyLong(), anyLong()))
-                .thenReturn(Mono.just(voiceActivity));
+                .thenReturn(voiceActivity);
         when(event.isJoinEvent()).thenReturn(true);
-        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(Mono.empty());
+        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(voiceActivityMap);
 
         Mono<Void> mono = trackingService.onVoiceChannelEvent(event);
         StepVerifier.create(mono)
@@ -58,9 +64,9 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
         when(voiceState.getGuildId()).thenReturn(Snowflake.of("1"));
         when(voiceState.getUserId()).thenReturn(Snowflake.of("2"));
         when(activityRepository.getVoiceActivity(anyLong(), anyLong()))
-                .thenReturn(Mono.just(voiceActivity));
+                .thenReturn(voiceActivity);
         when(event.isLeaveEvent()).thenReturn(true);
-        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(Mono.empty());
+        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(voiceActivityMap);
 
         Mono<Void> mono = trackingService.onVoiceChannelEvent(event);
         StepVerifier.create(mono)
@@ -77,10 +83,10 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
         when(voiceState.getGuildId()).thenReturn(Snowflake.of("1"));
         when(voiceState.getUserId()).thenReturn(Snowflake.of("2"));
         when(activityRepository.getVoiceActivity(anyLong(), anyLong()))
-                .thenReturn(Mono.empty());
+                .thenReturn(null);
 
         when(event.isJoinEvent()).thenReturn(true);
-        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(Mono.empty());
+        when(activityRepository.saveVoiceActivity(anyLong(), anyLong(), any())).thenReturn(voiceActivityMap);
 
         Mono<Void> mono = trackingService.onVoiceChannelEvent(event);
         StepVerifier.create(mono)
