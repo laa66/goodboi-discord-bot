@@ -37,7 +37,7 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
     @Test
     void shouldOnVoiceChannelEventVoiceActivityExistJoin() {
         long voiceMillisTest = System.currentTimeMillis() - 600;
-        VoiceActivity voiceActivity = new VoiceActivity(voiceMillisTest, 0L);
+        VoiceActivity voiceActivity = new VoiceActivity("username", voiceMillisTest, 0L);
         when(event.getCurrent()).thenReturn(voiceState);
         when(voiceState.getGuildId()).thenReturn(Snowflake.of("1"));
         when(voiceState.getUserId()).thenReturn(Snowflake.of("2"));
@@ -59,7 +59,7 @@ class VoiceChannelActivityTrackingServiceImplUnitTest {
     @Test
     void shouldOnVoiceChannelEventVoiceActivityExistLeave() {
         long voiceMillisTest = System.currentTimeMillis() - 600;
-        VoiceActivity voiceActivity = new VoiceActivity(voiceMillisTest, 0L);
+        VoiceActivity voiceActivity = new VoiceActivity("username", voiceMillisTest, 0L);
         when(event.getCurrent()).thenReturn(voiceState);
         when(voiceState.getGuildId()).thenReturn(Snowflake.of("1"));
         when(voiceState.getUserId()).thenReturn(Snowflake.of("2"));

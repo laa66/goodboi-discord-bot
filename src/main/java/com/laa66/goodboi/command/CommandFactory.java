@@ -2,6 +2,7 @@ package com.laa66.goodboi.command;
 
 import com.laa66.goodboi.music.AudioContextRepository;
 import com.laa66.goodboi.user.UserService;
+import com.laa66.goodboi.voiceactivity.VoiceChannelActivityRepository;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -14,6 +15,7 @@ public class CommandFactory {
     private final AudioPlayerManager playerManager;
     private final AudioContextRepository contextRepository;
     private final UserService userService;
+    private final VoiceChannelActivityRepository voiceChannelActivityRepository;
 
     public Command create(CommandType commandType, Object... args) {
         Command command;
@@ -30,6 +32,7 @@ public class CommandFactory {
             case EXIT_CHANNEL -> command = new ExitCommand((MessageCreateEvent) args[0], contextRepository);
             case BANNED_USERS -> command = new FindBannedCommand((ChatInputInteractionEvent) args[0], userService);
             case WARNED_USERS -> command = new FindWarnedCommand((ChatInputInteractionEvent) args[0], userService);
+            case GUILD_VOICE_ACTIVITY -> command = new FindVoiceActivityCommand((ChatInputInteractionEvent) args[0], voiceChannelActivityRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
         return command;

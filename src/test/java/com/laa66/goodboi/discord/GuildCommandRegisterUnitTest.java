@@ -39,7 +39,7 @@ class GuildCommandRegisterUnitTest {
         guildCommandRegister.registerCommands("232");
 
         verify(client, times(1)).getApplicationId();
-        verify(client, times(3)).getApplicationService();
+        verify(client, times(4)).getApplicationService();
         verify(applicationService, times(3))
                 .createGuildApplicationCommand(eq(23L), eq(232L), argThat(
                         commandRequest -> commandRequest.name().equals("bans")

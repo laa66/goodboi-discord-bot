@@ -25,6 +25,7 @@ public class ApplicationCommandEventListener implements EventListener<ChatInputI
             case "warns" -> commandType = WARNED_USERS;
             case "bans" -> commandType = BANNED_USERS;
             case "rude" -> commandType = RUDEST_USERS;
+            case "activity" -> commandType = GUILD_VOICE_ACTIVITY;
             default -> {
                 return Mono.empty();
             }

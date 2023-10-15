@@ -4,9 +4,6 @@ import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.TimeUnit;
-
-
 @AllArgsConstructor
 public class VoiceChannelActivityTrackingServiceImpl implements VoiceChannelActivityTrackingService {
 
@@ -20,15 +17,20 @@ public class VoiceChannelActivityTrackingServiceImpl implements VoiceChannelActi
                         event.getCurrent()
                                 .getUserId()
                                 .asLong()))
-                .switchIfEmpty(Mono.just(new VoiceActivity(System.currentTimeMillis(), 0L)))
+                .switchIfEmpty(Mono.just(new VoiceActivity(event.getCurrent()
+                        .getData()
+                        .member()
+                        .get()
+                        .user()
+                        .username(), System.currentTimeMillis(), 0L)))
                 .flatMap(voiceActivity -> {
                     if (event.isJoinEvent()) voiceActivity.setJoinedAt(System.currentTimeMillis());
                     else if (event.isLeaveEvent()) voiceActivity
                             .setActiveTime(voiceActivity.getActiveTime() + (System.currentTimeMillis() - voiceActivity.getJoinedAt()));
                     return Mono.just(voiceActivity);
                 })
-                .flatMap(voiceActivity -> Mono.just(voiceChannelActivityRepository
-                        .saveVoiceActivity(event.getCurrent()
+                .doOnNext(voiceActivity -> System.out.println("VoiceActivity: " + voiceActivity.getUsername() + " | " + voiceActivity.getActiveTime()))
+                .flatMap(voiceActivity -> Mono.just(voiceChannelActivityRepository.saveVoiceActivity(event.getCurrent()
                                         .getGuildId()
                                         .asLong(),
                                 event.getCurrent()

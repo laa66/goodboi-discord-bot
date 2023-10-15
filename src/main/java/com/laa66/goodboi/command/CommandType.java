@@ -14,5 +14,6 @@ public enum CommandType {
     COMMAND_INFO,
     BANNED_USERS,
     WARNED_USERS,
-    RUDEST_USERS
+    RUDEST_USERS,
+    GUILD_VOICE_ACTIVITY
 }
