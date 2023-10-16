@@ -17,19 +17,18 @@ public class VoiceChannelActivityTrackingServiceImpl implements VoiceChannelActi
                         event.getCurrent()
                                 .getUserId()
                                 .asLong()))
-                .switchIfEmpty(Mono.just(new VoiceActivity(event.getCurrent()
+                .defaultIfEmpty(new VoiceActivity(event.getCurrent()
                         .getData()
                         .member()
                         .get()
                         .user()
-                        .username(), System.currentTimeMillis(), 0L)))
+                        .username(), System.currentTimeMillis(), 0L))
                 .flatMap(voiceActivity -> {
                     if (event.isJoinEvent()) voiceActivity.setJoinedAt(System.currentTimeMillis());
                     else if (event.isLeaveEvent()) voiceActivity
                             .setActiveTime(voiceActivity.getActiveTime() + (System.currentTimeMillis() - voiceActivity.getJoinedAt()));
                     return Mono.just(voiceActivity);
                 })
-                .doOnNext(voiceActivity -> System.out.println("VoiceActivity: " + voiceActivity.getUsername() + " | " + voiceActivity.getActiveTime()))
                 .flatMap(voiceActivity -> Mono.just(voiceChannelActivityRepository.saveVoiceActivity(event.getCurrent()
                                         .getGuildId()
                                         .asLong(),
