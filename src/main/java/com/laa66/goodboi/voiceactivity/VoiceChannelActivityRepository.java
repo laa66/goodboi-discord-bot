@@ -1,5 +1,7 @@
 package com.laa66.goodboi.voiceactivity;
 
+import reactor.core.publisher.Flux;
+
 import java.util.Map;
 
 public interface VoiceChannelActivityRepository {
@@ -9,4 +11,6 @@ public interface VoiceChannelActivityRepository {
     Map<Long, VoiceActivity> getGuildVoiceActivity(long guildId);
 
     VoiceActivity getVoiceActivity(long guildId, long discordId);
+
+    void clear();
 }

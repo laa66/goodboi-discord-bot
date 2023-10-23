@@ -1,11 +1,16 @@
 package com.laa66.goodboi.voiceactivity;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import reactor.core.publisher.Flux;
 
+import java.time.*;
 import java.util.*;
 
+@Slf4j
 @AllArgsConstructor
 public class VoiceChannelActivityCacheRepository implements VoiceChannelActivityRepository {
 
@@ -35,4 +40,13 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
                    return null;
                 });
     }
+
+    @Override
+    public void clear() {
+        log.info(cache.invalidate()
+                ? "Voice Activity repository cleared"
+                : "Voice Activity repository is empty");
+    }
+
+
 }

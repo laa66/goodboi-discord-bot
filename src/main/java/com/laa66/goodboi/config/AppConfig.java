@@ -36,7 +36,7 @@ public class AppConfig {
     private String devGuildId;
 
     @Bean
-    public <T extends Event> GatewayDiscordClient gatewayDiscordClient(List<EventListener<T>> eventListeners) {
+    public <T extends Event> GatewayDiscordClient gatewayDiscordClient(List<EventListener<T>> eventListeners, VoiceChannelActivityTask voiceChannelActivityTask) {
         GatewayDiscordClient client = DiscordClientBuilder.create(discordToken)
                 .build()
                 .login()
@@ -45,12 +45,20 @@ public class AppConfig {
         new GuildCommandRegister(client.getRestClient())
                 .registerCommands(devGuildId);
 
+        voiceChannelActivityTask.scheduleRepositoryTask(23, 59)
+                .subscribe();
+
         eventListeners.forEach(eventListener -> client.on(eventListener.getEventType())
                 .flatMap(eventListener::process)
                 .subscribe());
 
         client.onDisconnect().block();
         return client;
+    }
+
+    @Bean
+    public VoiceChannelActivityTask voiceChannelActivityTask(VoiceChannelActivityRepository voiceChannelActivityRepository) {
+        return new VoiceChannelActivityTask(voiceChannelActivityRepository);
     }
 
     @Bean
