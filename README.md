@@ -24,11 +24,13 @@ The Bot also has queue functionality, so everyone on the same channel will have 
 
 ## How to use 🗺️
 
-Here you can check Goodboi commands:
+Here you can check Goodboi music commands:
 
-* ``!join`` - the bot joins a channel
+* ``!goodboi-command`` - list available bot commands
 
-* ``!play`` <URL> - load and start playing some music from provided URL
+* ``!join`` - the bot joins a voice channel
+
+* ``!play`` <URL> - load and start playing some music from provided Soundcloud URL
 
 * ``!queue`` - list all queued tracks 
 
@@ -36,9 +38,43 @@ Here you can check Goodboi commands:
 
 * ``!stop`` - pause music 
 
-* ``!resume`` - resume music 
+* ``!res`` - resume music 
 
 * ``!clean`` - clear queue and stop playing music
+
+* ``!exit`` - disconnect from voice channel
+
+And here you can check Goodboi guild commands:
+
+* ``/warns`` - list all warned users
+
+* ``/bans`` - list all banned users
+
+* ``/rude`` - list the rudest users
+
+* ``/activity`` - list amount of time users spend on voice channels today
+
+## Features 📌
+#### Here, you can check bot features:
+
+* Playing music from ``SoundCloud`` on a voice channel
+
+* Playlist ``queue`` where songs can be added
+
+* Changing the ``player's state`` - skipping to the next song, stopping, resuming and clearing the queue
+
+* Displaying the ``current`` playlist queue
+
+* Tracking ``ban`` and ``unban`` events and adding or removing users from the banned table in the DB accordingly
+
+* Filtering ``messages`` for offensive language
+
+* Assigning ``warnings`` and ``banning`` users who misuse offensive language
+
+* Listing ``banned`` users, ``warned`` users, and those who swear the most
+
+* Daily ``tracking`` of the time users spend on voice channels
+
 
 
 ## Built with 🔨
@@ -46,10 +82,11 @@ Here you can check Goodboi commands:
 #### Technologies & tools used:
 
 - Java 20
-- Spring Boot 3 
-- Reactor 3
+- Spring Boot 3
+- Reactor
 - Discord4J
 - LavaPlayer
+- PostgreSQL
 - Maven
 - Project Lombok
 - Docker
@@ -61,9 +98,9 @@ Here you can check Goodboi commands:
 - Mockito
 - Hamcrest
 - Reactor test
+- Testcontainers
 
 ## To-do 💡
 
-- Validating text in channels, warning and banning users
 - Analyze active channel volume
 - AI-generated voice for bot used for reading private messages from users
