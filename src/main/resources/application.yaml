@@ -8,9 +8,9 @@ bot:
 # database
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/goodboi_bot_db?allowPublicKeyRetrieval=true&useSSL=true
+    url: ${GOODBOI_DB_URL}
     username: ${GOODBOI_DB_USERNAME}
-    password: ${GOODBO_DB_PASSWORD}
+    password: ${GOODBOI_DB_PASSWORD}
     pool:
       enabled: true
       initial-size: 10
