@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-// TODO: 14.11.2023 Fix bug with reading json
 @ExtendWith(MockitoExtension.class)
 class GuildCommandRegisterIntegrationTest {
 

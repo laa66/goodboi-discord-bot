@@ -5,26 +5,15 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.RestClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
-// TODO: 14.11.2023 fix bug with reading json paths
 @Slf4j
 @AllArgsConstructor
 public class GuildCommandRegister {
@@ -42,16 +31,15 @@ public class GuildCommandRegister {
     }
 
     private Flux<ApplicationCommandRequest> buildGuildCommands() {
-        return Flux.fromStream(getJsonPaths()
-                .stream())
+        return getCommandResources()
                 .flatMap(this::readJsonCommand)
                 .filter(Objects::nonNull);
     }
 
-    private Mono<ApplicationCommandRequest> readJsonCommand(Path path) {
+    private Mono<ApplicationCommandRequest> readJsonCommand(Resource resource) {
         return Mono.fromCallable(() -> {
             ApplicationCommandRequest commandRequest = null;
-            try (InputStream resourceStream = new ClassPathResource(path.toString()).getInputStream()) {
+            try (InputStream resourceStream = resource.getInputStream()) {
                 commandRequest = mapper.getObjectMapper()
                         .readValue(resourceStream, ApplicationCommandRequest.class);
             } catch (IOException e) {
@@ -61,17 +49,17 @@ public class GuildCommandRegister {
         });
     }
 
-    private Set<Path> getJsonPaths() {
-        Set<Path> paths = null;
-        try (Stream<Path> pathStream = Files.list(Path.of("src/main/resources/commands"))) {
-            paths = pathStream
-                    .filter(file -> !Files.isDirectory(file))
-                    .map(path -> Path.of(path.getParent().getFileName() + "/" + path.getFileName()))
-                    .collect(Collectors.toSet());
+    private Flux<Resource> getCommandResources() {
+        Flux<Resource> commandResources = null;
+        try {
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource[] resources = resolver.getResources("classpath:commands/*.json");
+            commandResources = Flux.fromArray(resources);
         } catch (IOException e) {
-            log.error("Error while reading json paths", e);
+            log.error("Error while reading commands resources");
         }
-        return paths;
+
+        return commandResources;
     }
 
 }

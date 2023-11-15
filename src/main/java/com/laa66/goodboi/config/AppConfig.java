@@ -42,11 +42,8 @@ public class AppConfig {
                 .login()
                 .block();
 
-        // TODO: 14.11.2023 fix bug with reading json paths
-        //new GuildCommandRegister(client.getRestClient())
-        //        .registerCommands(devGuildId);
-
-        assert client != null;
+        new GuildCommandRegister(client.getRestClient())
+                .registerCommands(devGuildId);
 
         voiceChannelActivityTask.scheduleRepositoryTask(23, 59)
                 .subscribe();
