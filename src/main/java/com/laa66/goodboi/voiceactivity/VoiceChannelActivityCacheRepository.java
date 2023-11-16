@@ -3,11 +3,8 @@ package com.laa66.goodboi.voiceactivity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import reactor.core.publisher.Flux;
 
-import java.time.*;
 import java.util.*;
 
 @Slf4j
@@ -27,7 +24,12 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
     @Override
     @SuppressWarnings("unchecked")
     public Map<Long, VoiceActivity> getGuildVoiceActivity(long guildId) {
-        return cache.get(guildId, Map.class);
+        return Optional.ofNullable(cache.get(guildId, Map.class))
+                .orElseGet(() -> {
+                    Map<Long, VoiceActivity> guildVoiceMap = new HashMap<>();
+                    cache.put(guildId, guildVoiceMap);
+                    return guildVoiceMap;
+                });
     }
 
     @Override
@@ -35,10 +37,7 @@ public class VoiceChannelActivityCacheRepository implements VoiceChannelActivity
         Map<Long, VoiceActivity> guildVoiceActivityMap = getGuildVoiceActivity(guildId);
         return Optional.ofNullable(guildVoiceActivityMap)
                 .map(voiceActivityMap -> voiceActivityMap.get(discordId))
-                .orElseGet(() -> {
-                   cache.put(guildId, new HashMap<Long, VoiceActivity>());
-                   return null;
-                });
+                .orElse(null);
     }
 
     @Override

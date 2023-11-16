@@ -29,7 +29,7 @@ public class VoiceChannelActivityTrackingServiceImpl implements VoiceChannelActi
                             .setActiveTime(voiceActivity.getActiveTime() + (System.currentTimeMillis() - voiceActivity.getJoinedAt()));
                     return Mono.just(voiceActivity);
                 })
-                .flatMap(voiceActivity -> Mono.just(voiceChannelActivityRepository.saveVoiceActivity(event.getCurrent()
+                .flatMap(voiceActivity -> Mono.fromRunnable(() -> voiceChannelActivityRepository.saveVoiceActivity(event.getCurrent()
                                         .getGuildId()
                                         .asLong(),
                                 event.getCurrent()
