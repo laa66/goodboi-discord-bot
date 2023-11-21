@@ -32,7 +32,7 @@ public class CommandFactory {
             case EXIT_CHANNEL -> command = new ExitCommand((MessageCreateEvent) args[0], contextRepository);
             case BANNED_USERS -> command = new FindBannedCommand((ChatInputInteractionEvent) args[0], userService);
             case WARNED_USERS -> command = new FindWarnedCommand((ChatInputInteractionEvent) args[0], userService);
-            // TODO: 14.11.2023 send 'rudest users' to guild text channel
+            case RUDEST_USERS -> command = new FindRudestCommand((ChatInputInteractionEvent) args[0], userService);
             case GUILD_VOICE_ACTIVITY -> command = new FindVoiceActivityCommand((ChatInputInteractionEvent) args[0], voiceChannelActivityRepository);
             default -> throw new IllegalArgumentException("Cannot create command, invalid command type");
         }
